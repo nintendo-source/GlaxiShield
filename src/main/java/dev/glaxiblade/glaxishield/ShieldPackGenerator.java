@@ -43,7 +43,7 @@ public final class ShieldPackGenerator {
 
         Path pack = FabricLoader.getInstance().getGameDir()
                 .resolve("resourcepacks").resolve("GlaxiShield Generated");
-        Path textureDir = pack.resolve("assets/minecraft/textures/entity");
+        Path textureDir = pack.resolve("assets/minecraft/textures/entity/shield");
         Files.createDirectories(textureDir);
 
         BufferedImage shield = createShield(Color.decode(hex), skin, ign);
