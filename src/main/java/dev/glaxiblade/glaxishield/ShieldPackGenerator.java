@@ -69,42 +69,81 @@ public final class ShieldPackGenerator {
     }
 
     private static BufferedImage createShield(Color base, BufferedImage skin, String ign) {
-        BufferedImage out = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = out.createGraphics();
+        // ShieldModel in 26.1.1 uses a 64x64 atlas. Its plate is a 12x22x1
+        // cuboid at texOffs(0, 0), so the two large visible faces occupy
+        // atlas regions around x=1..13 and x=14..26, y=1..23.
+        // The previous generator painted in the middle of the atlas (x=24..40),
+        // which is not the shield face UV area; the head was therefore clipped.
+        BufferedImage atlas = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = atlas.createGraphics();
+        g.setComposite(AlphaComposite.Src);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        Polygon outer = new Polygon(new int[]{5,59,59,52,32,12,5},
-                new int[]{3,3,39,51,62,51,39}, 7);
-        g.setColor(new Color(20,24,31)); g.fillPolygon(outer);
-        Polygon inner = new Polygon(new int[]{8,56,56,50,32,14,8},
-                new int[]{6,6,38,48,58,48,38}, 7);
-        g.setColor(base); g.fillPolygon(inner);
-        g.setColor(base.brighter()); g.setStroke(new BasicStroke(2)); g.drawPolygon(inner);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-        BufferedImage face = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D fg = face.createGraphics();
-        fg.drawImage(skin, 0, 0, 8, 8, 8, 8, 16, 16, null);
-        if (skin.getWidth() >= 64 && skin.getHeight() >= 32)
-            fg.drawImage(skin, 0, 0, 8, 8, 40, 8, 48, 16, null);
-        fg.dispose();
-        g.drawImage(face, 24, 15, 40, 31, null);
+        // Paint both broad plate faces. Vanilla's cuboid UV unwrap places the
+        // opposing faces side-by-side in this atlas.
+        drawPlateFace(g, 1, 1, base, skin, ign);
+        drawPlateFace(g, 14, 1, base, skin, ign);
 
-        // Print the selected Minecraft IGN on a small dark nameplate.
-        String label = ign;
-        Font font = new Font(Font.SANS_SERIF, Font.BOLD, 7);
-        g.setFont(font);
-        FontMetrics fm = g.getFontMetrics();
-        while (fm.stringWidth(label) > 46 && font.getSize() > 4) {
-            font = font.deriveFont((float)(font.getSize() - 1));
-            g.setFont(font);
-            fm = g.getFontMetrics();
-        }
-        int textX = (64 - fm.stringWidth(label)) / 2;
-        g.setColor(new Color(0,0,0,190)); g.fillRoundRect(8, 34, 48, 13, 3, 3);
-        g.setColor(Color.WHITE); g.drawString(label, textX, 43);
-
-        g.setColor(new Color(230,245,255));
-        g.fillRect(10,10,2,2); g.fillRect(52,10,2,2); g.fillRect(31,51,2,2);
+        // Handle UV (texOffs 26,0; 2x6x6 cuboid).
+        g.setColor(new Color(35, 28, 22, 255));
+        g.fillRect(26, 0, 3, 7);
+        g.setColor(new Color(95, 78, 60, 255));
+        g.fillRect(27, 1, 1, 5);
         g.dispose();
-        return out;
+        return atlas;
+    }
+
+    private static void drawPlateFace(Graphics2D g, int x, int y, Color base,
+                                      BufferedImage skin, String ign) {
+        // The front face itself is exactly 12x22 pixels in the vanilla UV map.
+        g.setColor(new Color(24, 29, 38, 255));
+        g.fillRect(x, y, 12, 22);
+        g.setColor(base);
+        g.fillRect(x + 1, y + 1, 10, 20);
+        g.setColor(base.brighter());
+        g.drawRect(x, y, 11, 21);
+
+        // Minecraft skin base-layer head: (8,8)-(16,16). Add the hat layer
+        // only where it is opaque so transparent pixels preserve the face.
+        g.drawImage(skin, x + 2, y + 3, x + 10, y + 11,
+                8, 8, 16, 16, null);
+        if (skin.getWidth() >= 64 && skin.getHeight() >= 32) {
+            BufferedImage hat = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D hg = hat.createGraphics();
+            hg.setComposite(AlphaComposite.Src);
+            hg.drawImage(skin, 0, 0, 8, 8, 40, 8, 48, 16, null);
+            hg.dispose();
+            g.drawImage(hat, x + 2, y + 3, null);
+        }
+
+        // A compact, high-contrast name strip below the face. Keep it inside
+        // the 12x22 front-face UV area; scale down for long usernames.
+        g.setColor(new Color(8, 12, 18, 255));
+        g.fillRect(x + 1, y + 13, 10, 7);
+        g.setColor(new Color(255, 255, 255, 255));
+        Font font = new Font(Font.MONOSPACED, Font.BOLD, 5);
+        g.setFont(font);
+        FontMetrics metrics = g.getFontMetrics();
+        String label = ign;
+        while (metrics.stringWidth(label) > 10 && font.getSize() > 2) {
+            font = font.deriveFont((float) (font.getSize() - 1));
+            g.setFont(font);
+            metrics = g.getFontMetrics();
+        }
+        if (metrics.stringWidth(label) > 10) {
+            label = label.substring(0, Math.min(4, label.length()));
+        }
+        int tx = x + Math.max(1, (12 - metrics.stringWidth(label)) / 2);
+        int ty = y + 19;
+        g.drawString(label, tx, ty);
+
+        // Tiny corner rivets make the face read as a finished shield plate.
+        g.setColor(new Color(235, 245, 255, 255));
+        g.fillRect(x + 1, y + 1, 1, 1);
+        g.fillRect(x + 10, y + 1, 1, 1);
+        g.fillRect(x + 1, y + 20, 1, 1);
+        g.fillRect(x + 10, y + 20, 1, 1);
     }
 }
