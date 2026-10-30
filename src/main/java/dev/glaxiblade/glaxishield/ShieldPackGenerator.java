@@ -76,7 +76,7 @@ public final class ShieldPackGenerator {
         // which is not the shield face UV area; the head was therefore clipped.
         BufferedImage atlas = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = atlas.createGraphics();
-        g.setComposite(AlphaComposite.Src);
+        g.setComposite(AlphaComposite.SrcOver);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
