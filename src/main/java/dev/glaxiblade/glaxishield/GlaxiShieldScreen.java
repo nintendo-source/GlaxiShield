@@ -8,7 +8,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import java.awt.Color;
 
-public final class GlaxiIDScreen extends Screen {
+public final class GlaxiShieldScreen extends Screen {
     private EditBox ignField, hexField;
     private int selectedColor = Color.decode("#00D9FF").getRGB();
     private int wheelX, wheelY, wheelRadius = 36;
@@ -21,12 +21,12 @@ public final class GlaxiIDScreen extends Screen {
         int c = width / 2;
         ignField = new EditBox(font, c - 100, 55, 200, 20, Component.literal("Minecraft IGN"));
         ignField.setMaxLength(16);
-        ignField.setValue(GlaxiIDConfig.ign);
+        ignField.setValue(GlaxiShieldConfig.ign);
         addRenderableWidget(ignField);
 
         hexField = new EditBox(font, c - 100, 100, 200, 20, Component.literal("HEX color"));
         hexField.setMaxLength(7);
-        hexField.setValue(GlaxiIDConfig.hex);
+        hexField.setValue(GlaxiShieldConfig.hex);
         addRenderableWidget(hexField);
 
         wheelX = c;
@@ -51,13 +51,13 @@ public final class GlaxiIDScreen extends Screen {
             status = "Invalid IGN: use 1-16 letters, numbers or underscores.";
             return;
         }
-        if (!GlaxiIDConfig.validHex(hex)) {
+        if (!GlaxiShieldConfig.validHex(hex)) {
             status = "Invalid HEX. Example: #00D9FF";
             return;
         }
-        GlaxiIDConfig.ign = ign;
-        GlaxiIDConfig.hex = hex.toUpperCase();
-        GlaxiIDConfig.save();
+        GlaxiShieldConfig.ign = ign;
+        GlaxiShieldConfig.hex = hex.toUpperCase();
+        GlaxiShieldConfig.save();
         status = "Saved locally. Visual overrides are still being built.";
     }
 
