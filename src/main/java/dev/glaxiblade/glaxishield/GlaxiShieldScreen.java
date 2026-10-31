@@ -1,6 +1,5 @@
 package dev.glaxiblade.glaxishield;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -59,16 +58,7 @@ public final class GlaxiShieldScreen extends Screen {
         GlaxiShieldConfig.ign = ign;
         GlaxiShieldConfig.hex = hex.toUpperCase();
         GlaxiShieldConfig.save();
-        status = "Saved! Generating shield texture...";
-        new Thread(() -> {
-            try {
-                ShieldPackGenerator.generate(ign, hex.toUpperCase());
-                Minecraft.getInstance().execute(() -> status =
-                        "Generated! Enable 'GlaxiShield Generated' in Resource Packs.");
-            } catch (Exception e) {
-                Minecraft.getInstance().execute(() -> status = "Failed: " + e.getMessage());
-            }
-        }, "GlaxiShield-skin-fetch").start();
+        status = "Settings saved. Local-player-only shield rendering is not enabled yet.";
     }
 
     @Override
