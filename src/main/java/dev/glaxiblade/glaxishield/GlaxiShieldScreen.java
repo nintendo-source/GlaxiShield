@@ -14,7 +14,7 @@ public final class GlaxiShieldScreen extends Screen {
     private int wheelX, wheelY, wheelRadius = 36;
     private String status = "Enter your IGN and choose a color.";
 
-    public GlaxiIDScreen() { super(Component.literal("GlaxiID")); }
+    public GlaxiShieldScreen() { super(Component.literal("GlaxiID")); }
 
     @Override
     protected void init() {
