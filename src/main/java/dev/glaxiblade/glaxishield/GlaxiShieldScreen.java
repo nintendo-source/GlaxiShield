@@ -58,7 +58,7 @@ public final class GlaxiShieldScreen extends Screen {
         GlaxiShieldConfig.ign = ign;
         GlaxiShieldConfig.hex = hex.toUpperCase();
         GlaxiShieldConfig.save();
-        status = "Settings saved. Local-player-only shield rendering is not enabled yet.";
+        status = "Settings saved. Shield appearance will update when local rendering is implemented.";
     }
 
     @Override
