@@ -65,9 +65,15 @@ public final class GlaxiShieldScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         super.extractRenderState(g, mouseX, mouseY, delta);
         g.centeredText(font, "GlaxiShield", width / 2, 18, 0xFF00D9FF);
-        g.centeredText(font, "Client-side shield customization", width / 2, 34, 0xFFFFFFFF);
-        g.text(font, "Minecraft username", width / 2 - 100, 43, 0xFFBBBBBB);
-        g.text(font, "Base color (HEX)", width / 2 - 100, 88, 0xFFBBBBBB);
+        g.centeredText(font, "Client-side identity profiles", width / 2, 34, 0xFFFFFFFF);
+        net.minecraft.world.entity.player.Player target = TargetTracker.getCurrentTarget();
+        String targetLabel = target == null
+                ? "Nearest player: none within 32 blocks"
+                : "Nearest player: " + target.getName().getString()
+                    + String.format(" (%.1f blocks)", Math.sqrt(target.distanceToSqr(net.minecraft.client.Minecraft.getInstance().player)));
+        g.centeredText(font, targetLabel, width / 2, 47, 0xFF00D9FF);
+        g.text(font, "Minecraft username", width / 2 - 100, 57, 0xFFBBBBBB);
+        g.text(font, "Base color (HEX)", width / 2 - 100, 102, 0xFFBBBBBB);
         drawWheel(g);
         g.centeredText(font, status, width / 2, height - 88, 0xFFFFFFFF);
     }
