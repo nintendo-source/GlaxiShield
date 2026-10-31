@@ -20,10 +20,10 @@ public final class GlaxiShieldClient implements ClientModInitializer {
         openScreenKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.glaxishield.open", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            TargetTracker.refresh(client);
             while (openScreenKey.consumeClick()) {
                 if (client.screen == null) client.setScreen(new GlaxiShieldScreen());
             }
         });
     }
-
 }
