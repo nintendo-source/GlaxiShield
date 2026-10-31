@@ -8,25 +8,25 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import java.awt.Color;
 
-public final class GlaxiShieldScreen extends Screen {
+public final class GlaxiIDScreen extends Screen {
     private EditBox ignField, hexField;
     private int selectedColor = Color.decode("#00D9FF").getRGB();
     private int wheelX, wheelY, wheelRadius = 36;
     private String status = "Enter your IGN and choose a color.";
 
-    public GlaxiShieldScreen() { super(Component.literal("GlaxiShield")); }
+    public GlaxiIDScreen() { super(Component.literal("GlaxiID")); }
 
     @Override
     protected void init() {
         int c = width / 2;
         ignField = new EditBox(font, c - 100, 55, 200, 20, Component.literal("Minecraft IGN"));
         ignField.setMaxLength(16);
-        ignField.setValue(GlaxiShieldConfig.ign);
+        ignField.setValue(GlaxiIDConfig.ign);
         addRenderableWidget(ignField);
 
         hexField = new EditBox(font, c - 100, 100, 200, 20, Component.literal("HEX color"));
         hexField.setMaxLength(7);
-        hexField.setValue(GlaxiShieldConfig.hex);
+        hexField.setValue(GlaxiIDConfig.hex);
         addRenderableWidget(hexField);
 
         wheelX = c;
@@ -51,20 +51,20 @@ public final class GlaxiShieldScreen extends Screen {
             status = "Invalid IGN: use 1-16 letters, numbers or underscores.";
             return;
         }
-        if (!GlaxiShieldConfig.validHex(hex)) {
+        if (!GlaxiIDConfig.validHex(hex)) {
             status = "Invalid HEX. Example: #00D9FF";
             return;
         }
-        GlaxiShieldConfig.ign = ign;
-        GlaxiShieldConfig.hex = hex.toUpperCase();
-        GlaxiShieldConfig.save();
-        status = "Settings saved. Shield appearance will update when local rendering is implemented.";
+        GlaxiIDConfig.ign = ign;
+        GlaxiIDConfig.hex = hex.toUpperCase();
+        GlaxiIDConfig.save();
+        status = "Saved locally. Visual overrides are still being built.";
     }
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         super.extractRenderState(g, mouseX, mouseY, delta);
-        g.centeredText(font, "GlaxiShield", width / 2, 18, 0xFF00D9FF);
+        g.centeredText(font, "GlaxiID", width / 2, 18, 0xFF00D9FF);
         g.centeredText(font, "Client-side identity profiles", width / 2, 34, 0xFFFFFFFF);
         g.text(font, "Minecraft username", width / 2 - 100, 43, 0xFFBBBBBB);
         g.text(font, "Base color (HEX)", width / 2 - 100, 88, 0xFFBBBBBB);
