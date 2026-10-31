@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "glaxishield",
+  "id": "glaxiidentity",
   "version": "${version}",
-  "name": "GlaxiShield",
-  "description": "Client-side custom shield appearance with a Minecraft player head and custom color.",
+  "name": "GlaxiID",
+  "description": "Client-side player identity customizer: skins, display names, PvP tiers and tags.",
   "authors": ["Glaxiblade"],
   "license": "MIT",
   "environment": "client",
